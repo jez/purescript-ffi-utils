@@ -35,12 +35,13 @@ module FFI.Util
   ) where
 
 import Prelude (pure, unit, Unit)
-import Data.Maybe (Maybe(Nothing))
+import Data.Maybe (Maybe(Nothing), isJust, fromJust)
 import Data.Function.Uncurried ( Fn2, Fn3, Fn4, Fn5, Fn6, Fn7, Fn8
                                , runFn2, runFn3, runFn4, runFn5, runFn6, runFn7, runFn8 )
 import Control.Monad.Eff.Uncurried ( EffFn1, EffFn2, EffFn3, EffFn4, EffFn5, EffFn6, EffFn7, EffFn8
                                    , runEffFn1, runEffFn2, runEffFn3, runEffFn4, runEffFn5, runEffFn6, runEffFn7, runEffFn8 )
 import Control.Monad.Eff (Eff)
+import Partial.Unsafe (unsafePartial)
 
 foreign import typeof :: forall a. a -> String
 
@@ -54,6 +55,11 @@ foreign import _parseOptions :: forall a r1 r2. Fn3 (Maybe a) (Maybe a) { | r1 }
 
 parseOptions :: forall r1 r2. { | r1 } -> { | r2 }
 parseOptions = runFn3 _parseOptions (pure unit) Nothing
+
+foreign import selectMaybesImpl :: forall a r1 r2. (Maybe a -> Boolean) -> (Maybe a -> a) -> { | r1 } -> { | r2 }
+
+selectMaybes :: forall r1 r2. { | r1 } -> { | r2 }
+selectMaybes obj = unsafePartial (selectMaybesImpl isJust fromJust obj)
 
 foreign import isNullOrUndefined :: forall a. a -> Boolean
 

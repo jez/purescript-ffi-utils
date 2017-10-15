@@ -44,6 +44,23 @@ exports._parseOptions = function parseOptional(justValue, nothingValue, object) 
   return acc;
 }
 
+exports.selectMaybesImpl = function(isJust){
+  return function(fromJust){
+    return function(obj){
+      var newObj = {};
+      for(var key in obj){
+        if(!obj.hasOwnProperty(key)){
+          continue;
+        }
+        if(isJust(obj[key])){
+          newObj[key] = fromJust(obj[key]);
+        }
+      }
+      return newObj;
+    }
+  }
+}
+
 exports.isNullOrUndefined = function(a) {
   if (a === null || a === undefined) {
     return true;
