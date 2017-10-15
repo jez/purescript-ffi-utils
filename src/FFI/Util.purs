@@ -4,6 +4,7 @@ module FFI.Util
   , stringify
   , require
   , parseOptions
+  , selectMaybes
   , isNullOrUndefined
   , property
   , propertyPath
